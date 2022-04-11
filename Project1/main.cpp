@@ -14,13 +14,14 @@
 //			v.push_back(tmp);
 //		}
 //		GetMixture(word, size-1, result, result_counter + 1, v, length);
-//	}
+//	}f
 //}
 
 void GetMixture(std::vector<const char*>& results, const int size, const char* word, int length, char* Current_Res, int count = 0 ,int startIndx = 0)
 {
 	if (length == 0) {
 		char* x = _strdup(Current_Res);
+		x[size - count] = 0;
 		results.push_back(x);
 	}
 	else {
@@ -64,7 +65,7 @@ int main() {
 		Mixture(words[i], all, 2);
 	}
 	for (auto it = all[0].begin(); it != all[0].end(); ++it) {
-		std::cout << *it << "---";
+		std::cout << *it << "-";
 	}
 	std::cout << std::endl << "size:" << all[0].size() << std::endl;
 	//for (auto it = all[1].begin(); it != all[1].end(); ++it) {
