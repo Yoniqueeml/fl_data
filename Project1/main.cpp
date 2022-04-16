@@ -18,6 +18,7 @@ void GetMixture(std::vector<std::string>& results, std::string& word, int length
 }
 
 void Mixture(std::string& word, std::vector<std::vector<std::string>>& v, const int length = 1) {
+	if (word.size()<length) return;
 	std::vector<std::string> tmp;
 	std::string result;
 	GetMixture(tmp, word, length, result);
@@ -27,10 +28,10 @@ void Mixture(std::string& word, std::vector<std::vector<std::string>>& v, const 
 void FindMaxSubSequences(const double& gamma, const int& length, const std::map<std::string, int>& data) {
 	double factor = gamma * length;
 	bool check = false;
-	std::cout << "Eligible subsequences" << std::endl;
+	std::cout << "Eligible subsequences:" << std::endl;
 	for (auto elem : data){
 		if (elem.second > factor) {
-			std::cout << "Sub - " << elem.first << "//  Count - " << elem.second << std::endl;
+			std::cout << "Sub - " << elem.first << "   ___  Count - " << elem.second << std::endl;
 			check = true;
 		}
 	}
@@ -41,10 +42,12 @@ void FindMaxSubSequences(const double& gamma, const int& length, const std::map<
 
 int main() {
 	std::vector<std::string> words;
-	const int length = 2;
+	const int length = 4;
 	const int power = 9;
 	words.push_back("12345");
-	words.push_back("312");
+	words.push_back("312465");
+	words.push_back("abcde");
+	words.push_back("grab123c");
 	std::vector<std::vector<std::string>> all;
 
 	for (size_t i = 0; i < words.size(); ++i) {
@@ -66,10 +69,10 @@ int main() {
 	}
 	
 	for (auto it = data.begin(); it != data.end(); ++it) {
-		std::cout << "Sub - " << it->first<< "/// Count - " << it->second << std::endl;
+		std::cout << "Sub - " << it->first<< "   ____ Count - " << it->second << std::endl;
 	}
 	
-	double gamma = 2;
+	double gamma = 0.4;
 	FindMaxSubSequences(gamma, length, data);
 	
 }
