@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string.h>
-#include <map>
+#include <unordered_map>
 #include <set>
 
 void GetMixture(std::vector<std::string>& results, std::string& word, size_t length, const std::string& Current_Res, size_t startIndx = 0)
@@ -35,7 +35,7 @@ void PrintDelimeter(size_t n, std::string str = "----------") {
 	std::cout << str;
 }
 
-size_t FindMaxSubSequences(const double& gamma, const size_t& number_of_days, const std::map<std::string, int>& data) {
+size_t FindMaxSubSequences(const double& gamma, const size_t& number_of_days, const std::unordered_map<std::string, int>& data) {
 	size_t count = 0;
 	double factor = gamma * number_of_days;
 	std::cout << std::endl << "Event Frequency is " << factor << std::endl <<  "Eligible subsequences :" << std::endl;
@@ -70,7 +70,7 @@ void PrintAll(const std::vector<std::vector<std::string>> &v) {
 	PrintDelimeter(1);
 }
 
-void CreateTable(std::map<std::string, int>& data, const std::vector<std::vector<std::string>> &all) {
+void CreateTable(std::unordered_map<std::string, int>& data, const std::vector<std::vector<std::string>> &all) {
 	std::set<std::string> check;
 	for (size_t i = 0; i < all.size(); ++i) {
 		for (size_t j = 0; j < all[i].size(); ++j) {
@@ -85,7 +85,7 @@ void CreateTable(std::map<std::string, int>& data, const std::vector<std::vector
 }
 
 
-void PrintTable(const std::map<std::string, int> data) {
+void PrintTable(const std::unordered_map<std::string, int> data) {
 	int sep_factor;
 	if (data.size() > 3) sep_factor = 8;
 	else if (data.size() < 2) sep_factor = 4;
@@ -123,7 +123,7 @@ int main() {
 		Mixture(words[i], all, length);
 	}
 	PrintAll(all);
-	std::map<std::string, int> data;
+	std::unordered_map<std::string, int> data;
 	CreateTable(data, all);
 	PrintTable(data);
 	double gamma = 0.6; 
