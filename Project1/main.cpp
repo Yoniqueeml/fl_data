@@ -3,7 +3,6 @@
 #include <string.h>
 #include <map>
 #include <set>
-#include<windows.h>
 
 void GetMixture(std::vector<std::string>& results, std::string& word, size_t length, const std::string& Current_Res, size_t startIndx = 0)
 {
@@ -127,6 +126,6 @@ int main() {
 	std::map<std::string, int> data;
 	CreateTable(data, all);
 	PrintTable(data);
-	double gamma = 0.6; // gama = 60%/100
+	double gamma = 0.6; 
 	FindMaxSubSequences(gamma, words.size(), data);
 }
