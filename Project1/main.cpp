@@ -1,10 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <string.h>
-#include <algorithm>
-#include <stdio.h>
 #include <map>
 #include <set>
+#include<windows.h>
 
 void GetMixture(std::vector<std::string>& results, std::string& word, size_t length, const std::string& Current_Res, size_t startIndx = 0)
 {
@@ -31,40 +30,48 @@ void Mixture(std::string& word, std::vector<std::vector<std::string>>& v, const 
 	v.push_back(tmp);
 }
 
-void FindMaxSubSequences(const double& gamma, const size_t& number_of_days, const std::map<std::string, int>& data) {
-	double factor = gamma * number_of_days;
-	bool check = false;
-	std::cout << std::endl;
-	std::cout << "Eligible subsequences:" << std::endl << "_____________________" << std::endl;
-	for (auto elem : data){
-		if (elem.second > factor) {
-			std::cout << "Sub - " << elem.first << " | Count - " << elem.second << " |" << std::endl << "_____________________" << std::endl;
-			check = true;
-		}
-	}
-	if (check == false) {
-		std::cout << "All the subsequences failed the factor" << std::endl;
-	}
+void PrintDelimeter(size_t n, std::string str = "----------") {
+	if (n == 0) return;
+	PrintDelimeter(n - 1, str);
+	std::cout << str;
 }
 
-int main() {
-	std::vector<std::string> words;
-	const size_t length = 2;
-	words.push_back("gabrw");
-	words.push_back("sadf");
-	words.push_back("zcvgab");
-	std::vector<std::vector<std::string>> all;
-	for (size_t i = 0; i < words.size(); ++i) {
-		Mixture(words[i], all, length);
-	}
-	for (size_t i = 0; i < all.size(); i++) {
-		for (auto it = all[i].begin(); it != all[i].end(); ++it) {
-			std::cout << *it << "-";
+size_t FindMaxSubSequences(const double& gamma, const size_t& number_of_days, const std::map<std::string, int>& data) {
+	size_t count = 0;
+	double factor = gamma * number_of_days;
+	std::cout << std::endl << "Event Frequency is " << factor << std::endl <<  "Eligible subsequences :" << std::endl;
+	PrintDelimeter(2);
+	std::cout << std::endl;
+	for (auto elem : data){
+		if (elem.second > factor) {
+			std::cout << "Sub - " << elem.first << " | Count - " << elem.second << " |" << std::endl;
+			PrintDelimeter(2);
+			std::cout << std::endl;
+			count++;
 		}
-		std::cout << std::endl << "size:" << all[i].size() << std::endl <<"__________" <<std::endl;
 	}
-	std::cout << "_____________________" << std::endl;
-	std::map<std::string, int> data;
+	if (count == 0) {
+		std::cout << std::endl;
+		std::cout << "All the subsequences failed the factor" << std::endl << "Number of eligible subsequences is 0"<< std::endl;
+		return 0;
+	}
+	std::cout << "Number of eligible subsequences is " << count << std::endl;
+	return count;
+}
+
+void PrintAll(const std::vector<std::vector<std::string>> &v) {
+	for (size_t i = 0; i < v.size(); i++) {
+		for (auto it = v[i].begin(); it != v[i].end(); ++it) {
+			std::cout << *it << "/";
+		}
+		std::cout << std::endl << "size:" << v[i].size() << std::endl;
+		PrintDelimeter(1);
+		std::cout << std::endl;
+	}
+	PrintDelimeter(1);
+}
+
+void CreateTable(std::map<std::string, int>& data, const std::vector<std::vector<std::string>> &all) {
 	std::set<std::string> check;
 	for (size_t i = 0; i < all.size(); ++i) {
 		for (size_t j = 0; j < all[i].size(); ++j) {
@@ -76,10 +83,50 @@ int main() {
 		}
 		check.clear();
 	}
+}
+
+
+void PrintTable(const std::map<std::string, int> data) {
+	int sep_factor;
+	if (data.size() > 3) sep_factor = 8;
+	else if (data.size() < 2) sep_factor = 4;
+	else sep_factor = 6;
+	size_t temp = 0;
+	PrintDelimeter(sep_factor);
+	std::cout << std::endl;
 	for (auto it = data.begin(); it != data.end(); ++it) {
-		std::cout << "Sub - " << it->first<< " | Count - " << it->second << " |" << std::endl;
+		if (temp == 4) {
+			temp = 0;
+			std::cout << std::endl;
+		}
+		std::cout << "Sub - " << it->first << " | Count - " << it->second << " |  ";
+		temp++;
 	}
-	std::cout << "_____________________" << std::endl;
-	double gamma = 0.6;
+	std::cout << std::endl;
+	PrintDelimeter(sep_factor+1);
+	std::cout << std::endl;
+}
+
+int main() {
+
+	std::vector<std::string> words;
+	const size_t length = 2;
+	words.push_back("cde");
+	words.push_back("abc");
+	words.push_back("addab");
+	words.push_back("jkropqel123ab");
+	words.push_back("bcg");
+    words.push_back("cdf");
+	words.push_back("abcdfe");
+	words.push_back("ydunab");
+	std::vector<std::vector<std::string>> all;
+	for (size_t i = 0; i < words.size(); ++i) {
+		Mixture(words[i], all, length);
+	}
+	PrintAll(all);
+	std::map<std::string, int> data;
+	CreateTable(data, all);
+	PrintTable(data);
+	double gamma = 0.6; // gama = 60%/100
 	FindMaxSubSequences(gamma, words.size(), data);
 }
