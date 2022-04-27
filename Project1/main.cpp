@@ -3,20 +3,21 @@
 #include <string.h>
 #include <unordered_map>
 #include <set>
+#include "CustomEvent.cpp"
 
-void GetMixture(std::vector<std::string>& results, std::string& word, size_t length, const std::string& Current_Res, size_t startIndx = 0)
+void GetMixture(std::vector<std::string>& results, const std::string& word, size_t length, const std::string& Current_Res, size_t startIndx = 0)
 {
 	if (length == 0) {
 		results.push_back(Current_Res);
 	}
 	else {
-		for (int i = startIndx; i <= word.size() - length; i++) {
+		for (size_t i = startIndx; i <= word.size() - length; i++) {
 			GetMixture(results, word, length - 1, Current_Res + word[i], i + 1);
 		}
 	}
 }
 
-void Mixture(std::string& word, std::vector<std::vector<std::string>>& v, const size_t length = 1) {
+void Mixture(const std::string& word, std::vector<std::vector<std::string>>& v, const size_t& length = 1) {
 	if (word.size() < length || length == 0) return;
 	std::vector<std::string> tmp;
 	std::string result;
@@ -58,8 +59,9 @@ size_t FindMaxSubSequences(const double& gamma, const size_t& number_of_days, co
 	return count;
 }
 
-void PrintAll(const std::vector<std::vector<std::string>> &v) {
+void PrintAll(const std::vector<std::string> &words, const std::vector<std::vector<std::string>> &v) {
 	for (size_t i = 0; i < v.size(); i++) {
+		std::cout << "For: " << words[i] << std::endl;
 		for (auto it = v[i].begin(); it != v[i].end(); ++it) {
 			std::cout << *it << "/";
 		}
@@ -85,7 +87,7 @@ void CreateTable(std::unordered_map<std::string, int>& data, const std::vector<s
 }
 
 
-void PrintTable(const std::unordered_map<std::string, int> data) {
+void PrintTable(const std::unordered_map<std::string, int>& data){
 	int sep_factor;
 	if (data.size() > 3) sep_factor = 8;
 	else if (data.size() < 2) sep_factor = 4;
@@ -106,9 +108,10 @@ void PrintTable(const std::unordered_map<std::string, int> data) {
 	std::cout << std::endl;
 }
 
-int main() {
 
-	std::vector<std::string> words;
+int main() {
+	srand(time(NULL));
+	/*std::vector<std::string> words;
 	const size_t length = 2;
 	words.push_back("cde");
 	words.push_back("abc");
@@ -122,10 +125,13 @@ int main() {
 	for (size_t i = 0; i < words.size(); ++i) {
 		Mixture(words[i], all, length);
 	}
-	PrintAll(all);
+	PrintAll(words,all);
 	std::unordered_map<std::string, int> data;
 	CreateTable(data, all);
 	PrintTable(data);
 	double gamma = 0.6; 
-	FindMaxSubSequences(gamma, words.size(), data);
+	FindMaxSubSequences(gamma, words.size(), data);*/
+	Events ev;
+	ev.Insert("abc");
+	ev.PrintFullTable();
 }
