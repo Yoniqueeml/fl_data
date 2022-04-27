@@ -107,31 +107,59 @@ public:
 	void PrintFullTable() const {
 		if (count == 0) std::cout << "Table is empty";
 		for (size_t k = 0; k < 26; ++k) {
+			std::cout << std::endl << "Table:" << char(int(Alphabet(k)) + 97) << std::endl;
 			for (size_t i = 0; i < count; ++i) {
-				std::cout << char(int(Alphabet(k)) + 97);
 				PrintPlace(i);
-				std::cout << std::endl;
-				std::cout << words[i] << "|   ";
+				std::cout<< std::endl << words[i] << "|   ";
 				for (size_t j = 0; j < 9; ++j) {
 					std::cout << table[k][i][j] << "        ";
 				}
+				std::cout << std::endl;
 			}
-			std::cout << std::endl << "______________________________________" << std::endl;
+			std::cout << std::endl << "___________________________________________________________________________________" << std::endl;
 		}
 	}
-	void PrintTable(const Alphabet& type) const {
+	void PrintOneTable(const Alphabet& type) const {
 		if (count == 0) std::cout << "Table is empty";
+		std::cout << std::endl << "Table for one event: " << char(int(Alphabet(type)) + 97) << std::endl;
 		int type_table = int(type);
 		for (size_t i = 0; i < count; ++i) {
-			std::cout << char(int(Alphabet(i)) + 97);
 			PrintPlace(i);
 			std::cout << std::endl;
 			std::cout << words[i] << "|   ";
 			for (size_t j = 0; j < 9; ++j) {
 				std::cout << table[type_table][i][j] << "        ";
 			}
+			std::cout << std::endl;
 		}
+		std::cout << std::endl << "___________________________________________________________________________________" << std::endl;
 	}
+	void RelativeFrequency(const int& place, const Alphabet& type, const std::string& str, const double& gamma) const{
+		int sum = 0;
+		bool check = false;
+		int type_table = int(type);
+		int need = 0;
+		for (size_t i = 0; i < words.size(); ++i) {
+			if (words[i] == str) {
+				check = true;
+				need = table[type_table][i][place];
+				break;
+			}
+		}
+		if (check == false) {
+			std::cout << std::endl << "No matches with your str/type/place";
+			return;
+		}
+		for (size_t i = 0; i < count; ++i) {
+			sum += table[type_table][i][place];
+		}
+		std::cout << "Event: " << char(int(Alphabet(type)) + 97) << std::endl << "Place: " << place << std::endl << "Sequence: " << str;
+		std::cout << std::endl << "Number of indicated str/place/type = " << need;
+		std::cout << std::endl << "Number of all places with this type = " << sum << std::endl;
+		std::cout << "Relative Frequency: " << (double)need / sum << std::endl;
+		std::cout << "Target Frequency: " << gamma * sum << std::endl;
+	}
+
 	~Events() {
 		for (size_t i = 0; i < 26; ++i) {
 			for (size_t j = 0; j < size; ++j) {

@@ -132,6 +132,10 @@ int main() {
 	double gamma = 0.6; 
 	FindMaxSubSequences(gamma, words.size(), data);*/
 	Events ev;
-	ev.Insert("abc");
-	ev.PrintFullTable();
+	ev.Insert("abddddddddddddddddddddddddc");
+	ev.Insert("cddddeddddddddddddddddddd");
+	ev.Insert("addabddddddddddddddddddddddddddddd");
+	ev.PrintOneTable(Alphabet(3));
+	ev.RelativeFrequency(3, Alphabet(3), "cddddeddddddddddddddddddd", 0.4);
+	//ev.PrintFullTable();
 }
