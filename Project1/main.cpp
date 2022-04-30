@@ -86,7 +86,6 @@ void CreateTable(std::unordered_map<std::string, int>& data, const std::vector<s
 	}
 }
 
-
 void PrintTable(const std::unordered_map<std::string, int>& data){
 	int sep_factor;
 	if (data.size() > 3) sep_factor = 8;
@@ -108,6 +107,15 @@ void PrintTable(const std::unordered_map<std::string, int>& data){
 	std::cout << std::endl;
 }
 
+bool Recognize(const std::string& templat, const std::string& find) {
+	if (templat.size() == 0 || find.size() == 0) return false;
+	size_t count = 0;
+	for (size_t i = 0; i < templat.size(); ++i) {
+		if (find[count] == templat[i]) count++;
+		if (count == find.size()) return true;
+	}
+	return false;
+}
 
 int main() {
 	srand(time(NULL));
@@ -137,5 +145,8 @@ int main() {
 	ev.Insert("addabddddddddddddddddddddddddddddd");
 	ev.PrintOneTable(Alphabet(3));
 	ev.RelativeFrequency(3, Alphabet(3), "cddddeddddddddddddddddddd", 0.4);
-	//ev.PrintFullTable();
+	ev.PrintFullTable();
+	std::string templ = "privet,kakdela";
+	std::string sub = "pkda";
+	std::cout << Recognize(templ, sub);
 }

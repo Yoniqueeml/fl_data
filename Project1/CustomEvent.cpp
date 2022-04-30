@@ -48,14 +48,14 @@ class Events {
 	size_t size;
 	size_t count;
 public:
-	Events() {
-		size = 26;
+	Events(const int& _size = 32) {
+		size = _size;
 		count = 0;
 		table = new int** [26];
 		for (int i = 0; i < 26; i++)
 		{
-			table[i] = new int* [26];
-			for (int j = 0; j < 26; j++)
+			table[i] = new int* [size];
+			for (int j = 0; j < size; j++)
 			{
 				table[i][j] = new int[9];
 				for (int k = 0; k < 9; k++)
@@ -65,6 +65,7 @@ public:
 			}
 		}
 	}
+
 	void PrintData() const {
 		if (count == 0) std::cout << "Data is empty";
 		for (size_t i = 0; i < data.size(); ++i) {
@@ -77,6 +78,10 @@ public:
 	}
 	void Insert(const std::string& word) {
 		++count;
+		if (count == size) {
+			std::cout << "It`s all filled in" << std::endl;
+			return;
+		}
 		words.push_back(word);
 		std::list<CustomEvent> sequence;
 		for (size_t i = 0; i < word.size(); ++i) {
