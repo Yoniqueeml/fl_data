@@ -77,18 +77,21 @@ public:
 		}
 	}
 	void Insert(const std::string& word) {
-		++count;
-		if (count == size) {
+		if (count + 1 == size) {
 			std::cout << "It`s all filled in" << std::endl;
 			return;
 		}
-		words.push_back(word);
 		std::list<CustomEvent> sequence;
 		for (size_t i = 0; i < word.size(); ++i) {
+			if (word[i] < 97 || word[i] >122) {
+				throw "There is no such symbol in the alphabet";
+			}
 			sequence.push_back(CustomEvent(word[i]));
 		}
+		words.push_back(word);
 		data.push_back(sequence);
 		auto it = data[data.size() - 1].begin();
+		count++;
 		this->FillTable();
 	}
 	void FillTable() {

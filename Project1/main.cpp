@@ -140,6 +140,12 @@ int main() {
 	double gamma = 0.6; 
 	FindMaxSubSequences(gamma, words.size(), data);*/
 	Events ev;
+	try {
+		ev.Insert("]");
+	}
+	catch (const char* err) {
+		std::cout << err << std::endl;
+	}
 	ev.Insert("abddddddddddddddddddddddddc");
 	ev.Insert("cddddeddddddddddddddddddd");
 	ev.Insert("addabddddddddddddddddddddddddddddd");
