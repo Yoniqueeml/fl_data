@@ -12,7 +12,8 @@ class CustomEvent {
 public:
 	CustomEvent(const char& _word, const int& types, const int& prev_tick = 0) {
 		type = rand()%types;
-		tick = rand() % 100 + 1 + prev_tick / 2;
+		tick = rand() % 86400;
+		if (tick < prev_tick && tick != 86398) tick += 1;
 		place = rand() % 9;
 	}
 	int GetTick() const {
@@ -29,25 +30,37 @@ public:
 class Events {
 	std::vector<std::string> words;
 	std::vector<std::vector<CustomEvent>> data;
-	int*** table;
+	int*** table_place;
+	int*** table_tick;
 	size_t size;
 	size_t count;
 	size_t types;
 public:
-	Events(const int& _size = 32, const int& _types = 36) {
+	Events(const size_t& _size = 32, const size_t& _types = 36) {
 		size = _size;
 		types = _types;
 		count = 0;
-		table = new int** [_types];
-		for (int i = 0; i < _types; i++)
+		table_place = new int** [_types]; // table_place
+		for (size_t i = 0; i < _types; ++i)
 		{
-			table[i] = new int* [size];
-			for (int j = 0; j < size; j++)
+			table_place[i] = new int* [size];
+			for (size_t j = 0; j < size; ++j)
 			{
-				table[i][j] = new int[9];
-				for (int k = 0; k < 9; k++)
+				table_place[i][j] = new int[9];
+				for (size_t k = 0; k < 9; ++k)
 				{
-					table[i][j][k] = 0;
+					table_place[i][j][k] = 0;
+				}
+			}
+		}                                //--
+		// table_tick  24 hrs = 86400 tick;  86400/40 = 2160 ticks in one; 2160 ticks == 36minutes
+		table_tick = new int** [_types];
+		for (size_t i = 0; i < _types; ++i) {
+			table_tick[i] = new int* [size];
+			for (size_t j = 0; j < size; ++j) {
+				table_tick[i][j] = new int[40];
+				for (size_t k = 0; k < 40; ++k) {
+					table_tick[i][j][k] = 0; 
 				}
 			}
 		}
@@ -86,13 +99,16 @@ public:
 		}
 		words.push_back(word);
 		data.push_back(sequence);
-		auto it = data[data.size() - 1].begin();
 		count++;
 		this->FillTable();
 	}
 	void FillTable() {
 		for (auto it = data[data.size() - 1].begin(); it != data[data.size() - 1].end(); ++it) {
-			table[it->GetType()][data.size() - 1][it->GetPlace()] += 1;
+			table_place[it->GetType()][data.size() - 1][it->GetPlace()] += 1;
+		}
+		for (auto it = data[data.size() - 1].begin(); it != data[data.size() - 1].end(); ++it) {
+			int temp = it->GetTick() / 2160;
+			table_tick[it->GetType()][data.size() - 1][temp] += 1;
 		}
 	}
 	void PrintSpace(size_t spc) const{
@@ -100,30 +116,45 @@ public:
 		PrintSpace(spc - 1);
 		std::cout << " ";
 	}
-	void PrintPlace(const size_t i) const {
+	void PrintChoose(const size_t i, const std::string& str, const size_t & amount) const {
 		size_t space = words[i].size();
 		std::cout << " ";
 		PrintSpace(space);
-		for (size_t k = 0; k < 9; ++k) {
-			std::cout << "place" << k <<"   ";
+		for (size_t k = 0; k < amount; ++k) {
+			std::cout << str << k <<"   ";
 		}
 	}
-	void PrintFullTable() const {
+	void PrintAllPlace() const {
 		if (count == 0) std::cout << "Table is empty";
 		for (size_t k = 0; k < types; ++k) {
 			std::cout << std::endl << "Table for event:" << k << std::endl;
 			for (size_t i = 0; i < count; ++i) {
-				PrintPlace(i);
+				PrintChoose(i, "place", size);
 				std::cout<< std::endl << words[i] << "|   ";
 				for (size_t j = 0; j < 9; ++j) {
-					std::cout << table[k][i][j] << "        ";
+					std::cout << table_place[k][i][j] << "        ";
 				}
 				std::cout << std::endl;
 			}
 			std::cout << std::endl << "___________________________________________________________________________________" << std::endl;
 		}
 	}
-	void PrintOneTable(const int& _type) const {
+	void PrintAllTick() const {
+		if (count == 0) std::cout << "Table is empty";
+		for (size_t k = 0; k < types; ++k) {
+			std::cout << std::endl << "Table for event:" << k << std::endl;
+			for (size_t i = 0; i < count; ++i) {
+				PrintChoose(i, "tick", 40);
+				std::cout << std::endl << words[i] << "|   ";
+				for (size_t j = 0; j < 40; ++j) {
+					std::cout << table_tick[k][i][j] << "        ";
+				}
+				std::cout << std::endl;
+			}
+			std::cout << std::endl << "___________________________________________________________________________________" << std::endl;
+		}
+	}
+	void PrintOnePlace(const size_t& _type) const {
 		if (count == 0) std::cout << "Table is empty";
 		if (_type < 0 && _type>types) {
 			std::cout << "No information for this event type";
@@ -131,24 +162,50 @@ public:
 		}
 		std::cout << std::endl << "Table for event: " << _type << std::endl;
 		for (size_t i = 0; i < count; ++i) {
-			PrintPlace(i);
+			PrintChoose(i, "place", size);
 			std::cout << std::endl;
 			std::cout << words[i] << "|   ";
 			for (size_t j = 0; j < 9; ++j) {
-				std::cout << table[_type][i][j] << "        ";
+				std::cout << table_place[_type][i][j] << "        ";
 			}
 			std::cout << std::endl;
 		}
 		std::cout << std::endl << "___________________________________________________________________________________" << std::endl;
 	}
-	void RelativeFrequency(const int& place, const int& _type, const std::string& str, const double& gamma) const{
+	void PrintOneTick(const size_t& _tick) const {
+		if (count == 0) std::cout << "Table is empty";
+		if (_tick < 0 && _tick > 86400) {
+			std::cout << "No information for this tick";
+			return;
+		}
+		int temp = _tick / 2160;
+		size_t d1 = 0;
+		size_t d2 = 2160;
+		while (d2 < _tick) {
+			d2 += 2160;
+		}
+		d1 = d2 - 2160;
+		std::cout << std::endl << "Table for tick_time  " << _tick << "  [" <<d1 << ";"<< d2<<"]" <<std::endl;
+		std::cout << "column: " << temp << std::endl;
+		for (size_t i = 0; i < count; ++i) {
+			PrintChoose(i, "tick",40);
+			std::cout << std::endl;
+			std::cout << words[i] << "|   ";
+			for (size_t j = 0; j < 40; ++j) {
+				std::cout << table_tick[_tick][i][j] << "        ";
+			}
+			std::cout << std::endl;
+		}
+		std::cout << std::endl << "___________________________________________________________________________________" << std::endl;
+	}
+	void RelativeFrequencyPlace(const int& place, const int& _type, const std::string& str, const double& gamma) const{
 		int sum = 0;
 		bool check = false;
 		int need = 0;
 		for (size_t i = 0; i < words.size(); ++i) {
 			if (words[i] == str) {
 				check = true;
-				need = table[_type][i][place];
+				need = table_place[_type][i][place];
 				break;
 			}
 		}
@@ -157,7 +214,7 @@ public:
 			return;
 		}
 		for (size_t i = 0; i < count; ++i) {
-			sum += table[_type][i][place];
+			sum += table_place[_type][i][place];
 		}
 		std::cout << "Event: " << _type << std::endl << "Place: " << place << std::endl << "Sequence: " << str;
 		std::cout << std::endl << "Number of indicated str/place/type = " << need;
@@ -165,15 +222,46 @@ public:
 		std::cout << "Relative Frequency: " << (double)need / sum << std::endl;
 		std::cout << "Target Frequency: " << gamma * sum << std::endl;
 	}
-
+	void RelativeFrequencyTick(const int& tick, const int& _type, const std::string& str, const double& gamma) const {
+		int sum = 0;
+		bool check = false;
+		int need = 0;
+		int temp = tick / 2160;
+		for (size_t i = 0; i < words.size(); ++i) {
+			if (words[i] == str) {
+				check = true;
+				need = table_place[_type][i][temp];
+				break;
+			}
+		}
+		if (check == false) {
+			std::cout << std::endl << "No matches with your str/type/tick";
+			return;
+		}
+		for (size_t i = 0; i < count; ++i) {
+			sum += table_place[_type][i][temp];
+		}
+		std::cout << "Event: " << _type << std::endl << "Tick: " << tick << std::endl << "Sequence: " << str;
+		std::cout << std::endl << "Number of indicated str/place/tick = " << need;
+		std::cout << std::endl << "Number of all places with this tick-time = " << sum << std::endl;
+		std::cout << "Relative Frequency: " << (double)need / sum << std::endl;
+		std::cout << "Target Frequency: " << gamma * sum << std::endl;
+	}
 	~Events() {
 		for (size_t i = 0; i < types; ++i) {
 			for (size_t j = 0; j < size; ++j) {
-				delete table[i][j];
+				delete table_place[i][j];
 			}
-			delete [] table[i];
+			delete [] table_place[i];
 		}
-		delete[] table;
+		delete[] table_place;
+		for (size_t i = 0; i < types; ++i) {
+			for (size_t j = 0; j < size; ++j) {
+				delete table_tick[i][j];
+			}
+			delete[] table_tick[i];
+		}
+		delete[] table_tick;
 	}
 };
 

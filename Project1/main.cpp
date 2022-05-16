@@ -14,23 +14,20 @@ bool Recognize(const std::string& seq, const std::string& subseq) {
 }
 
 int main() {
-	srand(time(NULL));
+	srand(time(0));
 	/*Subsequences cube(2);
 	cube.Insert("abc");
 	cube.Insert("zxac");
 	cube.Insert("vgh");
 	cube.PrintTable();*/
-
-	// __________________
-
-
+	// _________________
 	Events ev;
 	ev.Insert("]");
-	ev.Insert("abdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddc");
-	ev.Insert("cddddedddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
-	ev.Insert("addabddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
-	ev.PrintOneTable(3);
-	ev.RelativeFrequency(3, 3, "addabddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", 0.4);
+	ev.Insert("abdddddddddd");
+	ev.Insert("cdddde");
+	ev.Insert("addabd");
+	ev.PrintOneTick(3);
+	//ev.RelativeFrequencyTick(500, 3, "addabddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", 0.4);
 	//ev.PrintFullTable();
 	std::string templ = "privet,kakdela";
 	std::string sub = "pkda";
