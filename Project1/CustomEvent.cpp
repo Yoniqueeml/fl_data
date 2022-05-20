@@ -10,8 +10,8 @@ class CustomEvent {
 	int tick;
 	int place;
 public:
-	CustomEvent(const char& _word, const int& types, const int& prev_tick = 0) {
-		type = rand()%types;
+	CustomEvent(const std::string _t, const int& prev_tick = 0) {
+		type = std::stoi(_t);
 		tick = rand() % 86400;
 		if (tick < prev_tick && tick != 86398) tick += 1;
 		place = rand() % 9;
@@ -35,6 +35,18 @@ class Events {
 	size_t size;
 	size_t count;
 	size_t types;
+	void FillTable() {
+		for (auto it = data[data.size() - 1].begin(); it != data[data.size() - 1].end(); ++it) {
+			int type = it->GetType();
+			int place = it->GetPlace();
+			table_place[type][data.size() - 1][place] += 1;
+		}
+		for (auto it = data[data.size() - 1].begin(); it != data[data.size() - 1].end(); ++it) {
+			int temp = it->GetTick() / 2160;
+			int type = it->GetType();
+			table_tick[type][data.size() - 1][temp] += 1;
+		}
+	}
 public:
 	Events(const size_t& _size = 32, const size_t& _types = 36) {
 		size = _size;
@@ -90,26 +102,29 @@ public:
 			std::cout << "It`s all filled in" << std::endl;
 			return;
 		}
+		std::vector<std::string> events;
+		std::string result;
+		for (size_t i = 0; i < word.size(); ++i) {
+			if (word[i] == '|') {
+				if (result.size() != 0) events.push_back(result);
+				result.clear();
+			}
+			else {
+				result += word[i];
+				if (i + 1 == word.size()) events.push_back(result);
+			}
+		}
 		std::vector<CustomEvent> sequence;
 		if (sequence.size() == 0) {
-			sequence.push_back(CustomEvent(word[0], types));
+			sequence.push_back(CustomEvent(events[0], 0));
 		}
-		for (size_t i = 1; i < word.size(); ++i) {
-			sequence.push_back(CustomEvent(word[i], types, sequence[i-1].GetTick()));
+		for (size_t i = 1; i < events.size(); ++i) {
+			sequence.push_back(CustomEvent(events[i], sequence[i-1].GetTick()));
 		}
 		words.push_back(word);
 		data.push_back(sequence);
 		count++;
 		this->FillTable();
-	}
-	void FillTable() {
-		for (auto it = data[data.size() - 1].begin(); it != data[data.size() - 1].end(); ++it) {
-			table_place[it->GetType()][data.size() - 1][it->GetPlace()] += 1;
-		}
-		for (auto it = data[data.size() - 1].begin(); it != data[data.size() - 1].end(); ++it) {
-			int temp = it->GetTick() / 2160;
-			table_tick[it->GetType()][data.size() - 1][temp] += 1;
-		}
 	}
 	void PrintSpace(size_t spc) const{
 		if (spc == 0) return;
@@ -188,11 +203,16 @@ public:
 		std::cout << std::endl << "Table for tick_time  " << _tick << "  [" <<d1 << ";"<< d2<<"]" <<std::endl;
 		std::cout << "column: " << temp << std::endl;
 		for (size_t i = 0; i < count; ++i) {
-			PrintChoose(i, "tick",40);
 			std::cout << std::endl;
-			std::cout << words[i] << "|   ";
+			std::cout << words[i] << std::endl;
+			int tmp = 0;
 			for (size_t j = 0; j < 40; ++j) {
-				std::cout << table_tick[_tick][i][j] << "        ";
+				std::cout << table_tick[temp][i][j] << "        ";
+				tmp++;
+				if (tmp == 10) {
+					std::cout << std::endl;
+					tmp = 0;
+				}
 			}
 			std::cout << std::endl;
 		}

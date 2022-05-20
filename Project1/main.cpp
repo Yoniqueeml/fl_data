@@ -12,25 +12,27 @@ bool Recognize(const std::string& seq, const std::string& subseq) {
 	}
 	return false;
 }
-
+#define task2
 int main() {
 	srand(time(0));
+#ifdef task1
 	Subsequences cube(2);
 	cube.Insert("123|321|2|4");
 	cube.Insert("2|5|6|4");
 	cube.Insert("24|12|13|2|4");
 	cube.FindMaxSubSequences(0.8);
+#endif
 #ifdef task2
 	Events ev;
-	ev.Insert("]");
-	ev.Insert("abdddddddddd");
-	ev.Insert("cdddde");
-	ev.Insert("addabd");
-	ev.PrintOneTick(3);
+	ev.Insert("2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|");
+	ev.Insert("2|2|22|2|2|2|2|2||2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|");
+	ev.Insert("2|2|2|2|2|2|2|2|2|2|22|2|2|2|2|2|2|2||2|2|2|2|2|2|2|");
+	ev.Insert("2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|");
+	ev.PrintOneTick(11000);
 	//ev.RelativeFrequencyTick(500, 3, "addabddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", 0.4);
 	//ev.PrintFullTable();
 	std::string templ = "privet,kakdela";
 	std::string sub = "pkda";
-	std::cout << Recognize(templ, sub);
+	//std::cout << Recognize(templ, sub);
 #endif
 }
