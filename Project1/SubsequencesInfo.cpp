@@ -34,19 +34,56 @@ class Subsequences {
 			check.clear();
 		}
 	}
+	long int fact(int N) const{
+		if (N == 0) 
+			return 1; 
+		else 
+			return N * fact(N - 1); 
+	}
 	void Mixture() {
 		if (words[count].size() < length || length == 0) return;
 		std::vector<std::string> tmp;
 		std::string result;
-		if (words[count].size() == length) {
-			tmp.push_back(words[count]);
-			all.push_back(tmp);
-			return;
+		for (size_t i = 0; i < words[count].size(); ++i) {
+			if (words[count][i] == '|') {
+				if (result.size() != 0) tmp.push_back(result);
+				result.clear();
+			}
+			else {
+				result += words[count][i];
+				if (i + 1 == words[count].size()) tmp.push_back(result);
+			}
 		}
-		GetMixture(tmp, words[count], result, length);
+		std::vector<std::vector<std::string>> fixed_length;
+		std::vector<std::string> ar;
+		GetMixture(fixed_length, ar, tmp, length);
+		tmp.clear();
+		for (size_t i = 0; i < fixed_length.size(); ++i) {
+			result.clear();
+			for (size_t j = 0; j < fixed_length[i].size(); ++j) {
+				result += fixed_length[i][j];
+				result += "|";
+			}
+			tmp.push_back(result);
+		}
 		all.push_back(tmp);
 	}
-	void GetMixture(std::vector<std::string>& results, const std::string& word, const std::string& Current_Res, size_t _length, size_t startIndx = 0)
+	void GetMixture(std::vector<std::vector<std::string>>& results, std::vector<std::string>& cur_res, std::vector<std::string>& word, size_t _length, size_t startIndx = 0)
+	{
+		if (_length == 0) {
+			results.push_back(cur_res);
+		}
+		if (startIndx >= word.size()) return;
+		else {
+			for (size_t i = startIndx; i <= word.size() - _length; i++) {
+				if (i >= word.size()) return;
+				cur_res.push_back(word[i]);
+				GetMixture(results, cur_res, word, _length - 1, i + 1);
+				cur_res.pop_back();
+			}
+		}
+	}
+	/*void GetMixture(std::vector<std::string>& results, const std::vector<string>& word, const std::string& Current_Res, size_t _length, size_t startIndx = 0)
 	{
 		if (_length == 0) {
 			results.push_back(Current_Res);
@@ -56,7 +93,7 @@ class Subsequences {
 				GetMixture(results, word, Current_Res + word[i], _length - 1, i + 1);
 			}
 		}
-	}
+	}*/
 	void PrintDelimeter(size_t n, std::string str = "----------") const {
 		if (n == 0) return;
 		PrintDelimeter(n - 1, str);
@@ -87,7 +124,7 @@ public:
 		std::cout << std::endl;
 		for (auto elem : data) {
 			if (elem.second > factor) {
-				std::cout << "Sub - " << elem.first << " | Count - " << elem.second << " |" << std::endl;
+				std::cout << "Sub - " << elem.first << "  Count - " << elem.second << " |" << std::endl;
 				PrintDelimeter(2);
 				std::cout << std::endl;
 				count++;
@@ -126,7 +163,7 @@ public:
 				temp = 0;
 				std::cout << std::endl;
 			}
-			std::cout << "Sub - " << it->first << " | Count - " << it->second << " |  ";
+			std::cout << "Sub - " << it->first << "  Count - " << it->second << " |  ";
 			temp++;
 		}
 		std::cout << std::endl;

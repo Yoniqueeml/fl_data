@@ -279,5 +279,4 @@ public:
 		}
 		return false;
 	}
-
 };

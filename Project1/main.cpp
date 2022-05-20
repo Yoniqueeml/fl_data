@@ -15,12 +15,12 @@ bool Recognize(const std::string& seq, const std::string& subseq) {
 
 int main() {
 	srand(time(0));
-	/*Subsequences cube(2);
-	cube.Insert("abc");
-	cube.Insert("zxac");
-	cube.Insert("vgh");
-	cube.PrintTable();*/
-	// _________________
+	Subsequences cube(2);
+	cube.Insert("123|321|2|4");
+	cube.Insert("2|5|6|4");
+	cube.Insert("24|12|13|2|4");
+	cube.FindMaxSubSequences(0.8);
+#ifdef task2
 	Events ev;
 	ev.Insert("]");
 	ev.Insert("abdddddddddd");
@@ -32,4 +32,5 @@ int main() {
 	std::string templ = "privet,kakdela";
 	std::string sub = "pkda";
 	std::cout << Recognize(templ, sub);
+#endif
 }
