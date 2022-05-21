@@ -1,9 +1,9 @@
-#include <iostream>
 #include <vector>
-#include <string>
 #include <list>
 #include <stdlib.h>
 #include <time.h>
+#include <iostream>
+#include <string>
 
 class CustomEvent {
 	int type;
@@ -77,8 +77,8 @@ public:
 			}
 		}
 	}
-	std::vector<std::vector<CustomEvent>> TakeData() const {
-		return data;
+	std::vector<std::string> TakeData() const {
+		return words;
 	}
 	int SeqInTable(const std::string& str) const {
 		if (str.size() == 0) return -1;
@@ -187,7 +187,7 @@ public:
 		}
 		std::cout << std::endl << "___________________________________________________________________________________" << std::endl;
 	}
-	void PrintOneTick(const size_t& _tick) const {
+	void PrintOneTick(const size_t& _tick = 0) const {
 		if (count == 0) std::cout << "Table is empty";
 		if (_tick < 0 && _tick > 86400) {
 			std::cout << "No information for this tick";
@@ -206,8 +206,8 @@ public:
 			std::cout << std::endl;
 			std::cout << words[i] << std::endl;
 			int tmp = 0;
-			for (size_t j = 0; j < 40; ++j) {
-				std::cout << table_tick[temp][i][j] << "        ";
+			for (size_t j = 0; j < types; ++j) {
+				std::cout << table_tick[j][i][temp] << "        ";
 				tmp++;
 				if (tmp == 10) {
 					std::cout << std::endl;
@@ -282,21 +282,5 @@ public:
 			delete[] table_tick[i];
 		}
 		delete[] table_tick;
-	}
-};
-
-class EventProcess {
-	Events db;
-public:
-	bool Recognize(const std::string& seq, const std::string& subseq, const int& _tiy) {
-		if (seq.size() == 0 || subseq.size() == 0) return false;
-		int temp = db.SeqInTable(seq);
-		if (temp == -1) return false;
-		size_t count = 0;
-		for (size_t i = 0; i < seq.size(); ++i) {
-			if (subseq[count] == seq[i] && db.TakeData()[temp][count].GetType() == _tiy) count++;
-			if (count == subseq.size()) return true;
-		}
-		return false;
 	}
 };

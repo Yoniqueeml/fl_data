@@ -8,6 +8,8 @@ class Subsequences {
 	std::vector<std::vector<std::string>> all;
 	std::unordered_map<std::string, int> data;
 	size_t length;
+	size_t types;
+	size_t days;
 	size_t count;
 	void RefreshTable() {
 		std::set<std::string> check;
@@ -33,12 +35,6 @@ class Subsequences {
 			}
 			check.clear();
 		}
-	}
-	long int fact(int N) const{
-		if (N == 0) 
-			return 1; 
-		else 
-			return N * fact(N - 1); 
 	}
 	void Mixture() {
 		if (words[count].size() < length || length == 0) return;
@@ -83,25 +79,16 @@ class Subsequences {
 			}
 		}
 	}
-	/*void GetMixture(std::vector<std::string>& results, const std::vector<string>& word, const std::string& Current_Res, size_t _length, size_t startIndx = 0)
-	{
-		if (_length == 0) {
-			results.push_back(Current_Res);
-		}
-		else {
-			for (size_t i = startIndx; i <= word.size() - _length; i++) {
-				GetMixture(results, word, Current_Res + word[i], _length - 1, i + 1);
-			}
-		}
-	}*/
 	void PrintDelimeter(size_t n, std::string str = "----------") const {
 		if (n == 0) return;
 		PrintDelimeter(n - 1, str);
 		std::cout << str;
 	}
 public:
-	Subsequences(const int& _length = 2) {
+	Subsequences(const int& _length = 2, const int& _types = 36, const int& _size = 32) {
 		length = _length;
+		types = _types;
+		days = _size;
 		count = 0;
 	}
 	void NewLength(const size_t& _length) {
@@ -116,9 +103,10 @@ public:
 		count++;
 	}
 
-	size_t FindMaxSubSequences(const double& gamma) {
+	size_t FindMaxSubSequences(const double& gamma) const{
 		size_t count = 0;
-		double factor = gamma * words.size();
+		double factor = gamma * (double(words.size())+1);
+		std::cout << gamma;
 		std::cout << std::endl << "Event Frequency is " << factor << std::endl << "Eligible subsequences :" << std::endl;
 		PrintDelimeter(2);
 		std::cout << std::endl;

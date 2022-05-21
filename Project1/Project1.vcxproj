@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CustomEvent.cpp" />
+    <ClCompile Include="EventProcess.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SubsequencesInfo.cpp" />
   </ItemGroup>
