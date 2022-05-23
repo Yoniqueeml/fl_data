@@ -51,7 +51,13 @@ class EventProcess {
 		db.RelativeFrequencyTick(tick, type, db.TakeData()[day_number], gamma);
 	}
 public:
-	EventProcess(const std::vector<std::string>& ui) {
+	EventProcess(const size_t& types = 36, const size_t& size =32, const size_t& length=2) {
+		Events db_t(size, types);
+		Subsequences db2_t(length);
+		db = db_t;
+		db2 = db2_t;
+	}
+	void Insert(const std::vector<std::string>& ui) {
 		for (size_t i = 0; i < ui.size(); ++i) {
 			db.Insert(ui[i]);
 			db2.Insert(ui[i]);

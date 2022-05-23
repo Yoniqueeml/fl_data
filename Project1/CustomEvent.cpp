@@ -48,6 +48,38 @@ class Events {
 		}
 	}
 public:
+	Events& operator=(const Events& rhs) {
+		if (this == &rhs) return (*this);
+		this->~Events();
+		this->types = rhs.types;
+		this->count = rhs.count;
+		this->size = rhs.size;
+		this->words = rhs.words;
+		this->data = rhs.data;
+		for (size_t i = 0; i < types; ++i)
+		{
+			table_place[i] = new int* [size];
+			for (size_t j = 0; j < size; ++j)
+			{
+				table_place[i][j] = new int[9];
+				for (size_t k = 0; k < 9; ++k)
+				{
+					table_place[i][j][k] = rhs.table_place[i][j][k];
+				}
+			}
+		}                             
+		table_tick = new int** [types];
+		for (size_t i = 0; i < types; ++i) {
+			table_tick[i] = new int* [size];
+			for (size_t j = 0; j < size; ++j) {
+				table_tick[i][j] = new int[40];
+				for (size_t k = 0; k < 40; ++k) {
+					table_tick[i][j][k] = rhs.table_tick[i][j][k];
+				}
+			}
+		}
+		return *this;
+	}
 	Events(const size_t& _size = 32, const size_t& _types = 36) {
 		size = _size;
 		types = _types;

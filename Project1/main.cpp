@@ -40,6 +40,7 @@ bool Recognize(const std::string& seq, const std::string& subseq) {
 	data.push_back("2|4|2|2|2|2|2|3|2|2|0|2|1|2|2|2|2|");
 	data.push_back("2|4|5|13|2|2|2|2|2|2|2|");
 	data.push_back("2|4|2|2|2|2|2|2|2|2|2|2|2|2|2|2|2|");
-	EventProcess ev(data);
+	EventProcess ev;
+	ev.Insert(data);
 	ev.DoSomething();
 }
