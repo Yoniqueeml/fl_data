@@ -16,6 +16,23 @@ public:
 		if (tick < prev_tick && tick != 86398) tick += 1;
 		place = rand() % 9;
 	}
+	CustomEvent(const CustomEvent& rhs) {
+		type = rhs.type;
+		tick = rhs.tick;
+		place = rhs.place;
+	}
+	CustomEvent() {
+		type = 0;
+		tick = 0;
+		place = 0;
+	}
+	CustomEvent& operator= (const CustomEvent& rhs) {
+		if (this == &rhs) return *this;
+		type = rhs.type;
+		tick = rhs.tick;
+		place = rhs.place;
+		return *this;
+	}
 	int GetTick() const {
 		return tick;
 	}
@@ -56,6 +73,7 @@ public:
 		this->size = rhs.size;
 		this->words = rhs.words;
 		this->data = rhs.data;
+		table_place = new int** [types];
 		for (size_t i = 0; i < types; ++i)
 		{
 			table_place[i] = new int* [size];
@@ -80,9 +98,18 @@ public:
 		}
 		return *this;
 	}
+	size_t GetTypes() const {
+		return types;
+	}
 	Events(const size_t& _size = 32, const size_t& _types = 36) {
 		size = _size;
 		types = _types;
+		std::vector<std::string> tmp(size);
+		std::vector<CustomEvent> tmp2(0);
+		for (size_t i = 0; i < _size; ++i) {
+			data.push_back(tmp2);
+		}
+		words = tmp;
 		count = 0;
 		table_place = new int** [_types]; // table_place
 		for (size_t i = 0; i < _types; ++i)
@@ -109,7 +136,10 @@ public:
 			}
 		}
 	}
-	std::vector<std::string> TakeData() const {
+	std::vector<std::vector<CustomEvent>> TakeData() const {
+		return data;
+	}
+	std::vector<std::string> TakeDataWords() const {
 		return words;
 	}
 	int SeqInTable(const std::string& str) const {
@@ -153,8 +183,8 @@ public:
 		for (size_t i = 1; i < events.size(); ++i) {
 			sequence.push_back(CustomEvent(events[i], sequence[i-1].GetTick()));
 		}
-		words.push_back(word);
-		data.push_back(sequence);
+		words[count] = word;
+		data[count]=sequence;
 		count++;
 		this->FillTable();
 	}
@@ -302,17 +332,13 @@ public:
 	~Events() {
 		for (size_t i = 0; i < types; ++i) {
 			for (size_t j = 0; j < size; ++j) {
-				delete table_place[i][j];
-			}
-			delete [] table_place[i];
-		}
-		delete[] table_place;
-		for (size_t i = 0; i < types; ++i) {
-			for (size_t j = 0; j < size; ++j) {
-				delete table_tick[i][j];
+				delete[] table_place[i][j];
+				delete[] table_tick[i][j];
 			}
 			delete[] table_tick[i];
+			delete [] table_place[i];
 		}
 		delete[] table_tick;
+		delete[] table_place;
 	}
 };

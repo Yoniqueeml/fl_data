@@ -28,8 +28,8 @@ class EventProcess {
 		std::cout << std::endl << "Input gamma: ";
 		std::cin >> gamma;
 		std::cout << std::endl;
-		if (day_number < 0 || day_number > db.TakeData().size()) return;
-		db.RelativeFrequencyPlace(place, type, db.TakeData()[day_number], gamma);
+		if (day_number < 0 || day_number > db.TakeData().size() || type > db.GetTypes() || place <0 || place>9) return;
+		db.RelativeFrequencyPlace(place, type, db.TakeDataWords()[day_number], gamma);
 	}
 	void Task2() const {
 		size_t type;
@@ -47,8 +47,8 @@ class EventProcess {
 		std::cout << std::endl << "Input gamma: ";
 		std::cin >> gamma;
 		std::cout << std::endl;
-		if (day_number < 0 || day_number > db.TakeData().size()) return;
-		db.RelativeFrequencyTick(tick, type, db.TakeData()[day_number], gamma);
+		if (day_number < 0 || day_number > db.TakeData().size() || type > db.GetTypes() || tick <0 || tick >40) return;
+		db.RelativeFrequencyTick(tick, type, db.TakeDataWords()[day_number], gamma);
 	}
 public:
 	EventProcess(const size_t& types = 36, const size_t& size =32, const size_t& length=2) {
@@ -57,11 +57,9 @@ public:
 		db = db_t;
 		db2 = db2_t;
 	}
-	void Insert(const std::vector<std::string>& ui) {
-		for (size_t i = 0; i < ui.size(); ++i) {
-			db.Insert(ui[i]);
-			db2.Insert(ui[i]);
-		}
+	void Insert(std::string& ui) {
+		db.Insert(ui);
+		db2.Insert(ui);
 	}
 	void DoSomething() const{
 		system("cls");
@@ -74,6 +72,36 @@ public:
 		if (choice == 0) Task0();
 		else if (choice == 1) Task1();
 		else Task2();
+	}
+	bool Recognize(const::std::string& seq, const std::string& subseq, const int& _inf) const{
+		bool inft;
+		system("cls");
+		std::cout << "If the parameter is responsible for tick press 1, for type press 0" << std::endl;
+		std::cin >> inft;
+		if (inft == true) { // type
+			if (seq.size() == 0 || subseq.size() == 0) return false;
+			int temp = db.SeqInTable(seq);
+			if (temp == -1) return false;
+			size_t count = 0;
+			for (size_t i = 0; i < seq.size(); ++i) {
+				if (subseq[count] == seq[i] && db.TakeData()[temp][count].GetType() == _inf) count++;
+				if (count == subseq.size()) return true;
+			}
+			return false;
+		}
+		else { // tick
+			if (seq.size() == 0 || subseq.size() == 0) return false;
+			int temp = db.SeqInTable(seq);
+			int t = _inf / 2160;
+			if (temp == -1) return false;
+			size_t count = 0;
+			for (size_t i = 0; i < seq.size(); ++i) {
+				if (subseq[count] == seq[i] && db.TakeData()[temp][count].GetTick() == t) count++;
+				if (count == subseq.size()) return true;
+			}
+			return false;
+		}
+		return false;
 	}
 	/*bool Recognize(const std::string& seq, const std::string& subseq, const int& _tiy) {
 		if (seq.size() == 0 || subseq.size() == 0) return false;
