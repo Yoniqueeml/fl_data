@@ -328,7 +328,7 @@ public:
 		std::cout << "Target Frequency: " << gamma * sum << std::endl;
 	}
 	void RelativeFrequencyTick(const int& tick, const int& _type, const std::string& str, const double& gamma) const {
-		if (tick < 0 || tick > 86398 || _type < 0 || _type > types) return;
+		if (tick < 0 || tick > 86398 || _type < 0 || (size_t)_type > types) return;
 		int sum = 0;
 		bool check = false;
 		int need = 0;

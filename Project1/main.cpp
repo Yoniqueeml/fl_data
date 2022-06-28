@@ -17,7 +17,7 @@ bool Recognize(const std::string& seq, const std::string& subseq) {
 int main() {
 	srand(time(0));
 #ifdef cube
-	EventProcess<int> d;
+	EventProcess d;
 	size_t days=3;
 	std::vector<std::vector<int>> data(days);
 	data[0] = { 0, 2, 5, 1, 3 };
@@ -26,10 +26,10 @@ int main() {
 	d.FindMaxSub(data, 0.4);
 #endif
 #ifdef freq
-	EventProcess<int> ev;
+	EventProcess ev;
 	std::vector<std::vector<CustomEvent>> data2;
 	std::vector<int> types = { 5, 0, 1, 2, -1, 5, 0 };
-	std::vector<int> places = { 0, 0, 1, 2, -1, 0, 0 };
+	std::vector<int> placs = { 0, 0, 1, 2, -1, 0, 0 };
 	std::vector<int> ticks = { 0, 0, 0, 2, -1, 0, 0 };
 	size_t day = 0;
 	size_t i = 0;
@@ -37,7 +37,7 @@ int main() {
 		std::vector<CustomEvent> tmp;
 		data2.push_back(tmp);
 		while (i < types.size() && types[i] != -1) {
-			data2[day].push_back(CustomEvent(types[i], places[i], ticks[i]));
+			data2[day].push_back(CustomEvent(types[i], placs[i], ticks[i]));
 			i++;
 		}
 		day++;

@@ -1,12 +1,12 @@
 #include "SubsequencesInfo.cpp"
 
-template <typename T>
 class MaxSub {
-	Subsequences<T> db;
+	Subsequences db;
 public:
 	MaxSub(const int& length = 2) {
-		Subsequences<T> db(length);
+		Subsequences db(length);
 	}
+	template<typename T>
 	void FindMaxSub(const std::vector<std::vector<T>>& data, const double& gamma) {
 		for (size_t i = 0; i < data.size(); ++i) {
 			db.Insert(data[i]);
@@ -35,20 +35,29 @@ public:
 		}
 		db.RelativeFrequencyPlace(place, type, db.TakeDataWords()[day_number], gamma);
 	}
-};
-
-template<typename T>
-class EventProcess : public EventsTable, public MaxSub<T> {
-public:
-	/*bool Recognize(const std::string& seq, const std::string& subseq, const int& _tiy) {
+	bool RecognizeTick(const std::string& seq, const std::string& subseq, const int& _tick) {
 		if (seq.size() == 0 || subseq.size() == 0) return false;
 		int temp = db.SeqInTable(seq);
 		if (temp == -1) return false;
 		size_t count = 0;
 		for (size_t i = 0; i < seq.size(); ++i) {
-			if (subseq[count] == seq[i] && db.TakeData()[temp][count].GetType() == _tiy) count++;
+			if (subseq[count] == seq[i] && db.TakeData()[temp][count].GetType() == _tick) count++;
 			if (count == subseq.size()) return true;
 		}
 		return false;
-	}*/
+	}
+	bool RecognizePlace(const std::string& seq, const std::string& subseq, const int& _place) {
+		if (seq.size() == 0 || subseq.size() == 0) return false;
+		int temp = db.SeqInTable(seq);
+		if (temp == -1) return false;
+		size_t count = 0;
+		for (size_t i = 0; i < seq.size(); ++i) {
+			if (subseq[count] == seq[i] && db.TakeData()[temp][count].GetPlace() == _place) count++;
+			if (count == subseq.size()) return true;
+		}
+		return false;
+	}
+};
+
+class EventProcess : public EventsTable, public MaxSub {
 };

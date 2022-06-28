@@ -4,33 +4,33 @@
 #include <set>
 #include "CustomEvent.cpp"
 
-template<>
-struct std::hash<CustomEvent> {
-	size_t operator()(const CustomEvent& ce) const{
-		std::string result;
-		result += ce.GetPlace();
-		result += ce.GetTick();
-		result += ce.GetType();
-		return std::hash<std::string>()(result);
-	}
-};
-template<>
-struct std::equal_to<CustomEvent> {
-	size_t operator()(const CustomEvent& lhs, const CustomEvent& rhs) const {
-		return ((lhs.GetPlace() == rhs.GetPlace()) && (lhs.GetTick() == rhs.GetTick()) && (lhs.GetType() == rhs.GetType()));
-	}
-};
-template <typename T, typename hasher = std::hash<T>, typename KeyEqual = std::equal_to<T>>
+//template<>
+//struct std::hash<CustomEvent> {
+//	size_t operator()(const CustomEvent& ce) const{
+//		std::string result;
+//		result += ce.GetPlace();
+//		result += ce.GetTick();
+//		result += ce.GetType();
+//		return std::hash<std::string>()(result);
+//	}
+//};
+//template<>
+//struct std::equal_to<CustomEvent> {
+//	size_t operator()(const CustomEvent& lhs, const CustomEvent& rhs) const {
+//		return ((lhs.GetPlace() == rhs.GetPlace()) && (lhs.GetTick() == rhs.GetTick()) && (lhs.GetType() == rhs.GetType()));
+//	}
+//};
+
+//template <typename T, typename hasher = std::hash<T>, typename KeyEqual = std::equal_to<T>>
 class Subsequences {
-	std::vector<std::vector<T>> all;
-	std::unordered_map<T, int, hasher, KeyEqual> data;
+	std::vector<std::vector<std::string>> all;
+	std::unordered_map<std::string, int> data;
 	size_t length;
 	size_t types;
 	size_t days;
 	size_t count;
-	template <typename T>
 	void RefreshTable() {
-		std::set<T> check;
+		std::set <std::string> check;
 		for (size_t j = 0; j < all[count].size(); ++j) {
 			if (check.find(all[count][j]) == check.end()) {
 				check.insert(all[count][j]);
@@ -40,9 +40,8 @@ class Subsequences {
 		}
 		check.clear();
 	}
-	template <typename T>
 	void CreateTableWithNewLength() {
-		std::set<T> check;
+		std::set<std::string> check;
 		data.clear();
 		for (size_t i = 0; i < all.size(); ++i) {
 			for (size_t j = 0; j < all[i].size(); ++j) {
@@ -62,7 +61,16 @@ class Subsequences {
 		std::vector<std::vector<T>> fixed_length;
 		std::vector<T> ar;
 		GetMixture(fixed_length, ar, tmp, length);
-		all.push_back(tmp);
+		std::vector<std::string> tmp2;
+		for (size_t i = 0; i < fixed_length.size(); ++i) {
+			std::string result;
+			for (size_t j = 0; j < fixed_length[i].size(); ++j) {
+				result += std::to_string(fixed_length[i][j]);
+			}
+			tmp2.push_back(result);
+			result.clear();
+		}
+		all.push_back(tmp2);
 	}
 	template <typename T>
 	void GetMixture(std::vector<std::vector<T>>& results, std::vector<T>& cur_res, std::vector<T>& word, size_t _length, size_t startIndx = 0)
@@ -99,14 +107,14 @@ public:
 	template <typename T>
 	void Insert(const std::vector<T>& data) {
 		Mixture(data);
-		RefreshTable<T>();
+		RefreshTable();
 		count++;
 	}
 
 	size_t FindMaxSubSequences(const double& gamma) const {
 		size_t count = 0;
-		double factor = gamma * (double(this->count + 1));
-		std::cout << gamma;
+		int tmp = this->count +1;
+		double factor = gamma * (double(tmp));
 		std::cout << std::endl << "Event Frequency is " << factor << std::endl << "Eligible subsequences :" << std::endl;
 		PrintDelimeter(2);
 		std::cout << std::endl;
