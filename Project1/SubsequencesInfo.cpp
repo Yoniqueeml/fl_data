@@ -2,17 +2,35 @@
 #include <string>
 #include <unordered_map>
 #include <set>
+#include "CustomEvent.cpp"
 
+template<>
+struct std::hash<CustomEvent> {
+	size_t operator()(const CustomEvent& ce) const{
+		std::string result;
+		result += ce.GetPlace();
+		result += ce.GetTick();
+		result += ce.GetType();
+		return std::hash<std::string>()(result);
+	}
+};
+template<>
+struct std::equal_to<CustomEvent> {
+	size_t operator()(const CustomEvent& lhs, const CustomEvent& rhs) const {
+		return ((lhs.GetPlace() == rhs.GetPlace()) && (lhs.GetTick() == rhs.GetTick()) && (lhs.GetType() == rhs.GetType()));
+	}
+};
+template <typename T, typename hasher = std::hash<T>, typename KeyEqual = std::equal_to<T>>
 class Subsequences {
-	std::vector<std::string> words;
-	std::vector<std::vector<std::string>> all;
-	std::unordered_map<std::string, int> data;
+	std::vector<std::vector<T>> all;
+	std::unordered_map<T, int, hasher, KeyEqual> data;
 	size_t length;
 	size_t types;
 	size_t days;
 	size_t count;
+	template <typename T>
 	void RefreshTable() {
-		std::set<std::string> check;
+		std::set<T> check;
 		for (size_t j = 0; j < all[count].size(); ++j) {
 			if (check.find(all[count][j]) == check.end()) {
 				check.insert(all[count][j]);
@@ -22,8 +40,9 @@ class Subsequences {
 		}
 		check.clear();
 	}
+	template <typename T>
 	void CreateTableWithNewLength() {
-		std::set<std::string> check;
+		std::set<T> check;
 		data.clear();
 		for (size_t i = 0; i < all.size(); ++i) {
 			for (size_t j = 0; j < all[i].size(); ++j) {
@@ -36,35 +55,17 @@ class Subsequences {
 			check.clear();
 		}
 	}
-	void Mixture() {
-		if (words[count].size() < length || length == 0) return;
-		std::vector<std::string> tmp;
-		std::string result;
-		for (size_t i = 0; i < words[count].size(); ++i) {
-			if (words[count][i] == '|') {
-				if (result.size() != 0) tmp.push_back(result);
-				result.clear();
-			}
-			else {
-				result += words[count][i];
-				if (i + 1 == words[count].size()) tmp.push_back(result);
-			}
-		}
-		std::vector<std::vector<std::string>> fixed_length;
-		std::vector<std::string> ar;
+	template <typename T>
+	void Mixture(const std::vector<T>& data) {
+		if (length == 0) return;
+		std::vector<T> tmp = data;
+		std::vector<std::vector<T>> fixed_length;
+		std::vector<T> ar;
 		GetMixture(fixed_length, ar, tmp, length);
-		tmp.clear();
-		for (size_t i = 0; i < fixed_length.size(); ++i) {
-			result.clear();
-			for (size_t j = 0; j < fixed_length[i].size(); ++j) {
-				result += fixed_length[i][j];
-				result += "|";
-			}
-			tmp.push_back(result);
-		}
 		all.push_back(tmp);
 	}
-	void GetMixture(std::vector<std::vector<std::string>>& results, std::vector<std::string>& cur_res, std::vector<std::string>& word, size_t _length, size_t startIndx = 0)
+	template <typename T>
+	void GetMixture(std::vector<std::vector<T>>& results, std::vector<T>& cur_res, std::vector<T>& word, size_t _length, size_t startIndx = 0)
 	{
 		if (_length == 0) {
 			results.push_back(cur_res);
@@ -95,17 +96,16 @@ public:
 		length = _length;
 		CreateTableWithNewLength();
 	}
-
-	void Insert(const std::string& str) {
-		words.push_back(str);
-		Mixture();
-		RefreshTable();
+	template <typename T>
+	void Insert(const std::vector<T>& data) {
+		Mixture(data);
+		RefreshTable<T>();
 		count++;
 	}
 
-	size_t FindMaxSubSequences(const double& gamma) const{
+	size_t FindMaxSubSequences(const double& gamma) const {
 		size_t count = 0;
-		double factor = gamma * (double(words.size())+1);
+		double factor = gamma * (double(this->count + 1));
 		std::cout << gamma;
 		std::cout << std::endl << "Event Frequency is " << factor << std::endl << "Eligible subsequences :" << std::endl;
 		PrintDelimeter(2);
@@ -128,7 +128,6 @@ public:
 	}
 	void PrintAll() const {
 		for (size_t i = 0; i < all.size(); i++) {
-			std::cout << "For: " << words[i] << std::endl;
 			for (auto it = all[i].begin(); it != all[i].end(); ++it) {
 				std::cout << *it << "/";
 			}
@@ -138,7 +137,7 @@ public:
 		}
 		PrintDelimeter(1);
 	}
-	void PrintTable() const{
+	void PrintTable() const {
 		int sep_factor;
 		if (data.size() > 3) sep_factor = 8;
 		else if (data.size() < 2) sep_factor = 4;

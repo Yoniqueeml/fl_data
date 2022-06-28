@@ -12,24 +12,37 @@ bool Recognize(const std::string& seq, const std::string& subseq) {
 	return false;
 }
 
+#define cube
+#define freq
 int main() {
 	srand(time(0));
-	EventProcess ev;
-	std::vector<std::string> data;
-	data.push_back("1|21|3|15|22|0|31|2|2|2|2|2|2|2|2|");
-	data.push_back("1|21|3|15|22|2|2|2|2|2|2|2|2|");
-	data.push_back("1|21|3|2|2|2|2|2|2|2|2|");
-	data.push_back("1|21|3|2|2|2|2|2|2|2|");
-	data.push_back("1|21|3|15|22|0|31|2|2|2|2|2|2|2|2|");
-	data.push_back("1|21|3|2|2|2|2|2|2|2|2|2|2|2|2|2|");
-	/*data.push_back("1|21||");
-	data.push_back("1|21|3");
-	data.push_back("1|2");
-	data.push_back("1|2");
-	data.push_back("1|");
-	data.push_back("1|2");*/
-	for (size_t i = 0; i < data.size(); ++i) {
-		ev.Insert(data[i]);
+#ifdef cube
+	EventProcess<int> d;
+	size_t days=3;
+	std::vector<std::vector<int>> data(days);
+	data[0] = { 0, 2, 5, 1, 3 };
+	data[1] = { 0, 2, 5, 4, 7 };
+	data[2] = { 1, 5, 4, 7 };
+	d.FindMaxSub(data, 0.4);
+#endif
+#ifdef freq
+	EventProcess<int> ev;
+	std::vector<std::vector<CustomEvent>> data2;
+	std::vector<int> types = { 5, 0, 1, 2, -1, 5, 0 };
+	std::vector<int> places = { 0, 0, 1, 2, -1, 0, 0 };
+	std::vector<int> ticks = { 0, 0, 0, 2, -1, 0, 0 };
+	size_t day = 0;
+	size_t i = 0;
+	while (i < types.size()) {
+		std::vector<CustomEvent> tmp;
+		data2.push_back(tmp);
+		while (i < types.size() && types[i] != -1) {
+			data2[day].push_back(CustomEvent(types[i], places[i], ticks[i]));
+			i++;
+		}
+		day++;
+		++i;
 	}
-	ev.DoSomething();
+	ev.RelativeFrequencyPlace(data2, 0, 5, 0, 0.2);
+#endif
 }

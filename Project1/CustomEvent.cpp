@@ -10,6 +10,15 @@ class CustomEvent {
 	int tick;
 	int place;
 public:
+	CustomEvent(const int& _type, const int& _place, const int& _tick, const int& prev_tick=0) {
+		type = _type;
+		tick = _tick;
+		place = _place;
+		if (_tick < prev_tick) {
+			tick += (prev_tick - _tick);
+			if (tick > 86398) tick = 86398;
+		}
+	}
 	CustomEvent(const std::string _t, const int& prev_tick = 0) {
 		type = std::stoi(_t);
 		tick = rand() % 86400;
@@ -53,15 +62,15 @@ class Events {
 	size_t count;
 	size_t types;
 	void FillTable() {
-		for (auto it = data[data.size() - 1].begin(); it != data[data.size() - 1].end(); ++it) {
+		for (auto it = data[count - 1].begin(); it != data[count - 1].end(); ++it) {
 			int type = it->GetType();
 			int place = it->GetPlace();
-			table_place[type][data.size() - 1][place] += 1;
+			table_place[type][count - 1][place] += 1;
 		}
-		for (auto it = data[data.size() - 1].begin(); it != data[data.size() - 1].end(); ++it) {
+		for (auto it = data[count - 1].begin(); it != data[count - 1].end(); ++it) {
 			int temp = it->GetTick() / 2160;
 			int type = it->GetType();
-			table_tick[type][data.size() - 1][temp] += 1;
+			table_tick[type][count - 1][temp] += 1;
 		}
 	}
 public:
@@ -158,6 +167,20 @@ public:
 				std::cout << "Tick: " << it->GetTick() << "   Place:" << it->GetPlace() << std::endl;
 			}   
 		}
+	}
+	void Insert(const std::vector<CustomEvent>& ce) {
+		if (count + 1 == size) {
+			std::cout << "It's all filled in" << std::endl;
+			return;
+		}
+		data[count] = ce;
+		std::string result;
+		for (size_t i = 0; i < ce.size(); ++i) {
+			result += std::to_string(ce[i].GetType());
+		}
+		words[count] = result;
+		count++;
+		this->FillTable();
 	}
 	void Insert(const std::string& word) {
 		if (count + 1 == size) {
@@ -305,6 +328,7 @@ public:
 		std::cout << "Target Frequency: " << gamma * sum << std::endl;
 	}
 	void RelativeFrequencyTick(const int& tick, const int& _type, const std::string& str, const double& gamma) const {
+		if (tick < 0 || tick > 86398 || _type < 0 || _type > types) return;
 		int sum = 0;
 		bool check = false;
 		int need = 0;
